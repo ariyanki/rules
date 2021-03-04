@@ -274,7 +274,8 @@ func (f *Function) Run() (string, error) {
 						value = gjson.Get(_firstParam, "body."+_idx)
 
 					} else if strings.HasPrefix(_key, "_row_.") {
-						_key = _key[6:len(_key)]
+						lenKey := len(_key)
+						_key = _key[6:lenKey]
 						value = gjson.Get(_firstParam, "body."+_idx+"."+_key)
 					}
 					if !value.Exists() {

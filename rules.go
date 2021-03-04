@@ -23,7 +23,7 @@ type (
 	}
 )
 
-// Execute ..
+// Run ..
 func (r *Rule) Run() (result string, err error) {
 	var config []Config
 	json.Unmarshal([]byte(r.Config), &config)
