@@ -1,0 +1,27 @@
+[
+    {
+        "conditions": [
+            {
+                "data": "[data1]",
+                "function_data": "text",
+                "function_value": "substring",
+                "logic": "and",
+                "operator": "equal",
+                "value": "abcdeghij,0,6"
+            }
+        ],
+        "label": "Sample",
+        "operations": [
+            {
+                "data": "[text]",
+                "function": "text",
+                "value": "{[data2.dt1]:[data2.dt2]}"
+            },
+            {
+                "data": "[split]",
+                "function": "split",
+                "value": "[data2.dt1],|"
+            }
+        ]
+    }
+]
