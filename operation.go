@@ -1,7 +1,6 @@
 package rules
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/tidwall/gjson"
@@ -18,11 +17,7 @@ type (
 
 // Run ..
 func (o *Operation) Run(data string) (result string, err error) {
-	errMsg := ""
 	o.Data = strings.TrimSpace(o.Data)
-	if o.Data == "" {
-		errMsg = "Operations Data is empty"
-	}
 
 	if o.Function == "text" {
 		mapValues := getAllPath(o.Value)
@@ -49,12 +44,11 @@ func (o *Operation) Run(data string) (result string, err error) {
 			FuncName: o.Function,
 			Args:     funcArgs,
 		}
-		funcRes, _ := f.Run()
+		funcRes, err := f.Run()
+		if err != nil {
+			return "", err
+		}
 		result = funcRes
-	}
-
-	if errMsg != "" {
-		return "", fmt.Errorf(errMsg)
 	}
 
 	return result, nil

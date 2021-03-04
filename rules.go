@@ -31,12 +31,12 @@ func (r *Rule) Run() (result string, err error) {
 	for _, rl := range config {
 		pass, err := executeConditions(rl.Conditions, r.Data)
 		if pass {
-			for _, obj := range rl.Operations {
-				exOpr, err := obj.Run(r.Data)
+			for _, operation := range rl.Operations {
+				exOpr, err := operation.Run(r.Data)
 				if err != nil {
 					break
 				}
-				r.Output = strings.ReplaceAll(r.Output, obj.Data, exOpr)
+				r.Output = strings.ReplaceAll(r.Output, operation.Data, exOpr)
 			}
 
 		}

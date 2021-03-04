@@ -73,44 +73,44 @@ func (c *Condition) Run(data string) (result bool, err error) {
 	}
 
 	operator, oprtExist := Operators[c.Operator]
-	if oprtExist {
-		switch c.Operator {
-		case "empty":
-			return isEmpty(c.Data), nil
-		case "not_empty":
-			return !isEmpty(c.Data), nil
-		case "start_with":
-		case "end_with":
-		case "in":
-			return inArray(c.Data, c.Value), nil
-		case "not_in":
-			return !inArray(c.Data, c.Value), nil
-		case "set":
-			return strings.HasPrefix(c.Data, c.Value), nil
-		case "not_set":
-			return strings.HasSuffix(c.Data, c.Value), nil
-		default:
-			exp := ""
-			if c.Operator == "equal" || c.Operator == "not_equal" || operator["type"] == "string" {
-				c.Data = strings.ReplaceAll(c.Data, `'`, `\'`)
-				c.Value = strings.ReplaceAll(c.Value, `'`, `\'`)
-				exp = fmt.Sprintf("'%s' %s '%s'", c.Data, operator["operator"], c.Value)
-			} else {
-				exp = fmt.Sprintf("%s %s %s", c.Data, operator["operator"], c.Value)
-			}
-			expression, err := govaluate.NewEvaluableExpression(exp)
-			if err != nil {
-				return false, err
-			}
-			exRes, err := expression.Evaluate(nil)
-			if err != nil {
-				return false, err
-			}
-			return exRes.(bool), nil
-		}
-	} else {
+	if !oprtExist {
 		return false, fmt.Errorf("Operator not found")
 	}
 
-	return true, nil
+	switch c.Operator {
+	case "empty":
+		return isEmpty(c.Data), nil
+	case "not_empty":
+		return !isEmpty(c.Data), nil
+	case "start_with":
+		return strings.HasPrefix(c.Data, c.Value), nil
+	case "end_with":
+		return strings.HasSuffix(c.Data, c.Value), nil
+	case "in":
+		return inArray(c.Data, c.Value), nil
+	case "not_in":
+		return !inArray(c.Data, c.Value), nil
+	case "set":
+		return !isEmpty(c.Data), nil
+	case "not_set":
+		return isEmpty(c.Data), nil
+	default:
+		exp := ""
+		if c.Operator == "equal" || c.Operator == "not_equal" || operator["type"] == "string" {
+			c.Data = strings.ReplaceAll(c.Data, `'`, `\'`)
+			c.Value = strings.ReplaceAll(c.Value, `'`, `\'`)
+			exp = fmt.Sprintf("'%s' %s '%s'", c.Data, operator["operator"], c.Value)
+		} else {
+			exp = fmt.Sprintf("%s %s %s", c.Data, operator["operator"], c.Value)
+		}
+		expression, err := govaluate.NewEvaluableExpression(exp)
+		if err != nil {
+			return false, err
+		}
+		exRes, err := expression.Evaluate(nil)
+		if err != nil {
+			return false, err
+		}
+		return exRes.(bool), nil
+	}
 }
