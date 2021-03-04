@@ -43,7 +43,7 @@ func (o *Operation) Run(data string) (result string, err error) {
 				}
 			}
 
-			funcArgs = append(funcArgs, value)
+			funcArgs = append(funcArgs, strings.TrimSpace(value))
 		}
 		f := Function{
 			FuncName: o.Function,

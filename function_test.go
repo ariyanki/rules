@@ -38,3 +38,14 @@ func TestFunctionSubString(t *testing.T) {
 	funcRes, _ := f.Run()
 	assert.Equal(t, "abcdef", funcRes)
 }
+
+func TestFunctionFormula(t *testing.T) {
+	funcArgs := []string{"20", "/", "4"}
+
+	f := Function{
+		FuncName: "formula",
+		Args:     funcArgs,
+	}
+	funcRes, _ := f.Run()
+	assert.Equal(t, "5", funcRes)
+}
