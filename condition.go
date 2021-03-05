@@ -8,7 +8,7 @@ import (
 )
 
 type (
-	//Condition ..
+	// Condition ..
 	Condition struct {
 		FunctionData  string `json:"function_data"`
 		Data          string `json:"data"`
@@ -16,6 +16,10 @@ type (
 		FunctionValue string `json:"function_value"`
 		Value         string `json:"value"`
 		Logic         string `json:"logic"`
+	}
+	// Conditions ..
+	Conditions struct {
+		Conditions []Condition
 	}
 )
 
@@ -115,4 +119,34 @@ func (c *Condition) Run(data string) (result bool, err error) {
 		}
 		return exRes.(bool), nil
 	}
+}
+
+// Runs ..
+func (cs *Conditions) Runs(data string) (result bool, err error) {
+	exp := ""
+	result = true
+	for _, cond := range cs.Conditions {
+		condRes, err := cond.Run(data)
+		if err != nil {
+			return false, err
+		}
+		if len(cs.Conditions) > 1 {
+			exp = fmt.Sprintf("%s %t %s", exp, condRes, OperatorsLogic[cond.Logic])
+		} else {
+			result = condRes
+		}
+
+	}
+	if len(cs.Conditions) > 1 {
+		expression, err := govaluate.NewEvaluableExpression(exp)
+		if err != nil {
+			return false, err
+		}
+		resEx, err := expression.Evaluate(nil)
+		if err != nil {
+			return false, err
+		}
+		result = resEx.(bool)
+	}
+	return result, nil
 }

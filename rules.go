@@ -2,10 +2,7 @@ package rules
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
-
-	"github.com/Knetic/govaluate"
 )
 
 type (
@@ -29,7 +26,10 @@ func (r *Rule) Run() (result string, err error) {
 	json.Unmarshal([]byte(r.Config), &config)
 
 	for _, rl := range config {
-		pass, err := executeConditions(rl.Conditions, r.Data)
+		conds := Conditions{
+			Conditions: rl.Conditions,
+		}
+		pass, err := conds.Runs(r.Data)
 		if err != nil {
 			return "", err
 		}
@@ -46,33 +46,4 @@ func (r *Rule) Run() (result string, err error) {
 	}
 
 	return r.Output, err
-}
-
-func executeConditions(conditions []Condition, data string) (result bool, err error) {
-	exp := ""
-	result = true
-	for _, cond := range conditions {
-		condRes, err := cond.Run(data)
-		if err != nil {
-			return false, err
-		}
-		if len(conditions) > 1 {
-			exp = fmt.Sprintf("%s %t %s", exp, condRes, OperatorsLogic[cond.Logic])
-		} else {
-			result = condRes
-		}
-
-	}
-	if len(conditions) > 1 {
-		expression, err := govaluate.NewEvaluableExpression(exp)
-		if err != nil {
-			return false, err
-		}
-		resEx, err := expression.Evaluate(nil)
-		if err != nil {
-			return false, err
-		}
-		result = resEx.(bool)
-	}
-	return result, nil
 }
