@@ -194,7 +194,7 @@ func TestFunctionSed(t *testing.T) {
 }
 
 func TestFunctionRSAGenerate(t *testing.T) {
-	private_key := `-----BEGIN RSA PRIVATE KEY-----
+	privateKey := `-----BEGIN RSA PRIVATE KEY-----
 MIICWQIBAAKBgFLyE8GuDMhNVZhZBzWKLb2+i3wqUj2eMKGbRSKe4OLXibNkE5Mz
 HbgLzZD7TdOdKKwDiBTqtgC2+tH5Wf3g89qG0sL9JXF9OcxK28B4FHsOlhXKhYpR
 93Za+p9KYGaJ4XF5ZMIDfDxscGwASeiMg3pH2vvOP5ejWuyVGEHaHkULAgMBAAEC
@@ -209,7 +209,7 @@ gNKXKU/QEddUrAb9yg2/FqLbG3SrMTv2OwhwD+MTR0YejB1XxGqq3AQi1dBBEPmM
 DoZ3xzqwzCVHjQUCQHDnpB9tuIk7cPE0tjg9v0GrPj9RiZWnbm3K5/LdNwe/tqlQ
 5+IKwVzzMgeBehNa+UvwCx2QoeFlPgvTWZmyqvc=
 -----END RSA PRIVATE KEY-----`
-	funcArgs := []string{"abcdef", private_key}
+	funcArgs := []string{"abcdef", privateKey}
 	f := Function{
 		FuncName: "rsaGenerateSign",
 		Args:     funcArgs,
@@ -219,14 +219,14 @@ DoZ3xzqwzCVHjQUCQHDnpB9tuIk7cPE0tjg9v0GrPj9RiZWnbm3K5/LdNwe/tqlQ
 }
 
 func TestFunctionRSAVerify(t *testing.T) {
-	private_key := `-----BEGIN PUBLIC KEY-----
+	publicKey := `-----BEGIN PUBLIC KEY-----
 MIGeMA0GCSqGSIb3DQEBAQUAA4GMADCBiAKBgFLyE8GuDMhNVZhZBzWKLb2+i3wq
 Uj2eMKGbRSKe4OLXibNkE5MzHbgLzZD7TdOdKKwDiBTqtgC2+tH5Wf3g89qG0sL9
 JXF9OcxK28B4FHsOlhXKhYpR93Za+p9KYGaJ4XF5ZMIDfDxscGwASeiMg3pH2vvO
 P5ejWuyVGEHaHkULAgMBAAE=
 -----END PUBLIC KEY-----`
 	signature := "EdDhV1IFyip34AKb6KyjQtQRbkEx1nqm6K+kt/ybVKwfclBcOoGhJb13sA30u6QUAIejtqMLYhmNHEQJxTgUTm/hVcPQ94B3lR0K9/PqaGFiFqoOaE5JW0PQItdDFeWYOyXNtpWZN/1sY9MuxBtoN583dFgWJgp5gNO3Z1YfbZU="
-	funcArgs := []string{"abcdef", private_key, signature}
+	funcArgs := []string{"abcdef", publicKey, signature}
 	f := Function{
 		FuncName: "rsaVerifySign",
 		Args:     funcArgs,
