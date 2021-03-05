@@ -63,9 +63,6 @@ func executeConditions(conditions []Condition, data string) (result bool, err er
 		}
 
 	}
-	if err != nil {
-		return false, err
-	}
 	if len(conditions) > 1 {
 		expression, err := govaluate.NewEvaluableExpression(exp)
 		if err != nil {
