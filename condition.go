@@ -60,7 +60,8 @@ func (c *Condition) Run(data string) (result bool, err error) {
 	}
 	c.Data, err = oprData.Run(data)
 	if err != nil {
-		return false, err
+		errMsg := strings.Replace(err.Error(), "operation", "", 1)
+		return false, fmt.Errorf("condition data %s", errMsg)
 	}
 	oprValue := Operation{
 		Data:     c.Value,
@@ -69,12 +70,13 @@ func (c *Condition) Run(data string) (result bool, err error) {
 	}
 	c.Value, err = oprValue.Run(data)
 	if err != nil {
-		return false, err
+		errMsg := strings.Replace(err.Error(), "operation", "", 1)
+		return false, fmt.Errorf("condition value %s", errMsg)
 	}
 
 	operator, oprtExist := Operators[c.Operator]
 	if !oprtExist {
-		return false, fmt.Errorf("Operator not found")
+		return false, fmt.Errorf("Condition operator not found")
 	}
 
 	switch c.Operator {
@@ -105,11 +107,11 @@ func (c *Condition) Run(data string) (result bool, err error) {
 		}
 		expression, err := govaluate.NewEvaluableExpression(exp)
 		if err != nil {
-			return false, err
+			return false, fmt.Errorf("condition logic %s", err.Error())
 		}
 		exRes, err := expression.Evaluate(nil)
 		if err != nil {
-			return false, err
+			return false, fmt.Errorf("condition logic %s", err.Error())
 		}
 		return exRes.(bool), nil
 	}

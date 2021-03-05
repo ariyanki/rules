@@ -30,18 +30,18 @@ func (r *Rule) Run() (result string, err error) {
 
 	for _, rl := range config {
 		pass, err := executeConditions(rl.Conditions, r.Data)
+		if err != nil {
+			return "", err
+		}
 		if pass {
 			for _, operation := range rl.Operations {
 				exOpr, err := operation.Run(r.Data)
 				if err != nil {
-					break
+					return "", err
 				}
 				r.Output = strings.ReplaceAll(r.Output, operation.Data, exOpr)
 			}
 
-		}
-		if err != nil {
-			break
 		}
 	}
 
@@ -54,7 +54,7 @@ func executeConditions(conditions []Condition, data string) (result bool, err er
 	for _, cond := range conditions {
 		condRes, err := cond.Run(data)
 		if err != nil {
-			break
+			return false, err
 		}
 		if len(conditions) > 1 {
 			exp = fmt.Sprintf("%s %t %s", exp, condRes, OperatorsLogic[cond.Logic])

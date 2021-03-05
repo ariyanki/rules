@@ -1,6 +1,7 @@
 package rules
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/tidwall/gjson"
@@ -22,8 +23,11 @@ func (o *Operation) Run(data string) (result string, err error) {
 	if o.Function == "text" {
 		mapValues := getAllPath(o.Value)
 		for _, key := range mapValues {
-			exMapRes := gjson.Get(data, key)
-			o.Value = strings.ReplaceAll(o.Value, "["+key+"]", exMapRes.String())
+			exMapRes, err := mapping(data, key)
+			if err != nil {
+				return result, fmt.Errorf("operation %s", err.Error())
+			}
+			o.Value = strings.ReplaceAll(o.Value, "["+key+"]", exMapRes)
 		}
 		result = o.Value
 	} else {
@@ -33,8 +37,11 @@ func (o *Operation) Run(data string) (result string, err error) {
 			mapValues := getAllPath(value)
 			if len(mapValues) > 0 {
 				for _, key := range mapValues {
-					exMapRes := gjson.Get(data, key)
-					value = strings.ReplaceAll(value, "["+key+"]", exMapRes.String())
+					exMapRes, err := mapping(data, key)
+					if err != nil {
+						return result, fmt.Errorf("operation %s", err.Error())
+					}
+					value = strings.ReplaceAll(value, "["+key+"]", exMapRes)
 				}
 			}
 
@@ -46,10 +53,18 @@ func (o *Operation) Run(data string) (result string, err error) {
 		}
 		funcRes, err := f.Run()
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("operation %s", err.Error())
 		}
 		result = funcRes
 	}
 
 	return result, nil
+}
+
+func mapping(json string, path string) (result string, err error) {
+	value := gjson.Get(json, path)
+	if !value.Exists() {
+		return "", fmt.Errorf("value doesn't exist: [%s]", path)
+	}
+	return value.String(), nil
 }

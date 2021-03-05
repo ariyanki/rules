@@ -66,6 +66,8 @@ func DateTimeParse(format string, value string) (t time.Time, e error) {
 		return t, fmt.Errorf("Empty DateTime Format")
 	}
 	_, _format := replace(format)
+	fmt.Println(_format)
+	fmt.Println(value)
 	return time.Parse(_format, value)
 }
 
